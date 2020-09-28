@@ -12,8 +12,7 @@ var score=0;
 
 var gameOver, restart;
 
-localStorage["HighestScore"] = 0;
-
+var b;
 function preload(){
   trex_running =   loadAnimation("trex1.png","trex3.png","trex4.png");
   trex_collided = loadAnimation("trex_collided.png");
@@ -31,10 +30,12 @@ function preload(){
   
   gameOverImg = loadImage("gameOver.png");
   restartImg = loadImage("restart.png");
+  b = loadImage("hut.webp");
 }
 
 function setup() {
   createCanvas(600, 200);
+  image(b,300,100,600,200);
   
   trex = createSprite(50,180,20,50);
   
@@ -47,10 +48,10 @@ function setup() {
   ground.x = ground.width /2;
   ground.velocityX = -(6 + 3*score/100);
   
-  gameOver = createSprite(300,100);
+  gameOver = createSprite(camera.position.x,100);
   gameOver.addImage(gameOverImg);
   
-  restart = createSprite(300,140);
+  restart = createSprite(camera.position.x,140);
   restart.addImage(restartImg);
   
   gameOver.scale = 0.5;
@@ -86,6 +87,10 @@ function draw() {
     if (ground.x < 0){
       ground.x = ground.width/2;
     }
+    trex.position.x = camera.position.x;
+    invisibleGround.position.x = camera.position.x;
+    camera.position.x = frameCount;
+  camera.position.y = 100;
   
     trex.collide(invisibleGround);
     spawnClouds();
@@ -105,6 +110,7 @@ function draw() {
     obstaclesGroup.setVelocityXEach(0);
     cloudsGroup.setVelocityXEach(0);
     
+    
     //change the trex animation
     trex.changeAnimation("collided",trex_collided);
     
@@ -123,7 +129,7 @@ function draw() {
 
 function spawnClouds() {
   //write code here to spawn the clouds
-  if (frameCount % 60 === 0) {
+  if (camera.position.x % 60 === 0) {
     var cloud = createSprite(600,120,40,10);
     cloud.y = Math.round(random(80,120));
     cloud.addImage(cloudImage);
@@ -144,8 +150,8 @@ function spawnClouds() {
 }
 
 function spawnObstacles() {
-  if(frameCount % 60 === 0) {
-    var obstacle = createSprite(600,165,10,40);
+  if(camera.position.x % 60 === 0) {
+    var obstacle = createSprite(camera.position.x + 300,165,10,40);
     //obstacle.debug = true;
     obstacle.velocityX = -(6 + 3*score/100);
     
